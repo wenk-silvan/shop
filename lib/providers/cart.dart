@@ -15,31 +15,36 @@ class CartItem {
 }
 
 class Cart with ChangeNotifier {
-  Map<String, CartItem> _items;
+  Map<String, CartItem> _items = {};
 
   Map<String, CartItem> get items {
     return {..._items};
   }
 
+  int get itemCount {
+    return this._items.length;
+  }
+
   void addItem(String productId, double price, String title) {
     if (this._items.containsKey(productId)) {
-      this._items.update(productId, (existingCartItem) =>
-          CartItem(
-            quantity: existingCartItem.quantity + 1,
-            price: existingCartItem.price,
-            title: existingCartItem.title,
-            id: existingCartItem.id,
-          ));
+      this._items.update(
+          productId,
+          (existingCartItem) => CartItem(
+                quantity: existingCartItem.quantity + 1,
+                price: existingCartItem.price,
+                title: existingCartItem.title,
+                id: existingCartItem.id,
+              ));
     } else {
       this._items.putIfAbsent(
           productId,
-              () =>
-              CartItem(
+          () => CartItem(
                 id: DateTime.now().toString(),
                 title: title,
                 price: price,
                 quantity: 1,
               ));
     }
+    this.notifyListeners();
   }
 }
