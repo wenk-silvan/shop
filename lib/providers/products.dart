@@ -52,4 +52,9 @@ class Products with ChangeNotifier {
   Product findById(String id) {
     return this._items.firstWhere((p) => p.id == id);
   }
+
+  void removeProduct(String id) {
+    this._items.removeWhere((i) => i.id == id);
+    this.notifyListeners();
+  }
 }
