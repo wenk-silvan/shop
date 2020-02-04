@@ -1,0 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/products.dart';
+import 'package:flutter_complete_guide/widgets/main_drawer.dart';
+import 'package:flutter_complete_guide/widgets/user_product_item.dart';
+import 'package:provider/provider.dart';
+
+class UserProductsScreen extends StatelessWidget {
+  static const route = '/user-products';
+
+  @override
+  Widget build(BuildContext context) {
+    final products = Provider.of<Products>(context).items;
+
+    return Scaffold(
+      drawer: MainDrawer(),
+      appBar: AppBar(
+        title: const Text('Your Products'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(8),
+        child: ListView.builder(
+          itemBuilder: (_, i) => Column(
+            children: <Widget>[
+              UserProductItem(
+                products[i].title,
+                products[i].imageUrl,
+              ),
+              Divider(),
+            ],
+          ),
+          itemCount: products.length,
+        ),
+      ),
+    );
+  }
+}
