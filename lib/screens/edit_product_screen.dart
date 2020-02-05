@@ -23,11 +23,38 @@ class _EditProductScreenState extends State<EditProductScreen> {
     description: '',
     imageUrl: '',
   );
+  var _isInit = true;
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': ''
+  };
 
   @override
   void initState() {
     this._imageUrlFocusNode.addListener(this._updateImageUrl);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId != null) {
+        this._editedProduct =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        this._initValues = {
+          'title': this._editedProduct.title,
+          'description': this._editedProduct.description,
+          'price': this._editedProduct.price.toString(),
+          'imageUrl': '',
+        };
+        this._imageUrlController.text = this._editedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   @override
@@ -53,7 +80,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void _safeForm() {
     if (!this._form.currentState.validate()) return;
     this._form.currentState.save();
-    Provider.of<Products>(context, listen: false).addProduct(this._editedProduct);
+    if(this._editedProduct.id != null) {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(this._editedProduct.id, this._editedProduct);
+    }
+    else {
+      Provider.of<Products>(context, listen: false)
+          .addProduct(this._editedProduct);
+    }
     Navigator.of(context).pop();
   }
 
@@ -76,6 +110,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: this._initValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) =>
@@ -85,7 +120,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   imageUrl: this._editedProduct.imageUrl,
                   description: this._editedProduct.description,
                   price: this._editedProduct.price,
-                  id: null,
+                  id: this._editedProduct.id,
+                  isFavorite: this._editedProduct.isFavorite,
                 ),
                 validator: (value) {
                   if (value.isEmpty) return 'Please enter a title.';
@@ -93,6 +129,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: this._initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -104,7 +141,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   imageUrl: this._editedProduct.imageUrl,
                   description: this._editedProduct.description,
                   price: double.parse(value),
-                  id: null,
+                  id: this._editedProduct.id,
+                  isFavorite: this._editedProduct.isFavorite,
                 ),
                 validator: (value) {
                   if (value.isEmpty) return 'Please enter a price.';
@@ -116,6 +154,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: this._initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
@@ -125,7 +164,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   imageUrl: this._editedProduct.imageUrl,
                   description: value,
                   price: this._editedProduct.price,
-                  id: null,
+                  id: this._editedProduct.id,
+                  isFavorite: this._editedProduct.isFavorite,
                 ),
                 validator: (value) {
                   if (value.isEmpty) return 'Please enter a description.';
@@ -167,7 +207,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         imageUrl: value,
                         description: this._editedProduct.description,
                         price: this._editedProduct.price,
-                        id: null,
+                        id: this._editedProduct.id,
+                        isFavorite: this._editedProduct.isFavorite,
                       ),
                       validator: (value) {
                         if (value.isEmpty) return 'Please enter an image URL.';

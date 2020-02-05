@@ -66,4 +66,13 @@ class Products with ChangeNotifier {
     this._items.removeWhere((i) => i.id == id);
     this.notifyListeners();
   }
+
+  void updateProduct(String id, Product existingProduct) {
+    final productIndex = this._items.indexWhere((p) => p.id == existingProduct.id);
+    if (productIndex >= 0) {
+      this._items[productIndex] = existingProduct;
+    } else {
+      print('...');
+    }
+  }
 }
