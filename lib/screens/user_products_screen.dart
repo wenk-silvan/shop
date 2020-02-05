@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/product.dart';
 import 'package:flutter_complete_guide/providers/products.dart';
 import 'package:flutter_complete_guide/screens/edit_product_screen.dart';
 import 'package:flutter_complete_guide/widgets/main_drawer.dart';
@@ -12,6 +13,10 @@ class UserProductsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
     final products = productsData.items;
+
+    void addProduct(Product product) {
+      Provider.of<Products>(context, listen: false).addProduct(product);
+    }
 
     return Scaffold(
       drawer: MainDrawer(),
@@ -31,10 +36,8 @@ class UserProductsScreen extends StatelessWidget {
           itemBuilder: (_, i) => Column(
             children: <Widget>[
               UserProductItem(
-                products[i].id,
-                products[i].title,
-                products[i].imageUrl,
-                productsData.removeProduct,
+                products[i],
+                addProduct,
               ),
               Divider(),
             ],

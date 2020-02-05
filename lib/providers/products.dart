@@ -52,6 +52,7 @@ class Products with ChangeNotifier {
       description: product.description,
       imageUrl: product.imageUrl,
       title: product.title,
+      isFavorite: product.isFavorite,
     );
 
     this._items.add(newProduct);
