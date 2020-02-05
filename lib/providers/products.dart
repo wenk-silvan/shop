@@ -70,6 +70,10 @@ class Products with ChangeNotifier {
 
       this._items.add(newProduct);
       this.notifyListeners();
+    })
+    .catchError((error) {
+      print(error);
+      throw error;
     });
   }
 
