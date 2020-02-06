@@ -5,6 +5,8 @@ import 'package:flutter_complete_guide/providers/product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
+  static const url = 'https://tutorial-shop-a3ad2.firebaseio.com/products.json';
+
   List<Product> _items = [
     Product(
       id: 'p1',
@@ -49,7 +51,6 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    const url = 'https://tutorial-shop-a3ad2.firebaseio.com/products.';
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -74,6 +75,15 @@ class Products with ChangeNotifier {
     catch(error) {
       print(error);
       throw error;
+    }
+  }
+
+  Future<void> fetchProducts() async {
+    try {
+      final response = await http.get(url);
+      print(json.decode(response.body));
+    } catch (error) {
+      throw(error);
     }
   }
 
