@@ -6,10 +6,10 @@ import 'package:flutter_complete_guide/providers/product.dart';
 import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
-  static const url = 'https://tutorial-shop-a3ad2.firebaseio.com/products.json';
+  static const url = 'https://tutorial-shop-a3ad2.firebaseio.com';
 
   List<Product> _items = [
-    Product(
+    /*Product(
       id: 'p1',
       title: 'Red Shirt',
       description: 'A red shirt - it is pretty red!',
@@ -40,7 +40,7 @@ class Products with ChangeNotifier {
       price: 49.99,
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-    ),
+    ),*/
   ];
 
   List<Product> get items {
@@ -53,7 +53,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     try {
-      final response = await http.post(url,
+      final response = await http.post(url + '/products.json',
           body: json.encode({
             'title': product.title,
             'description': product.description,
@@ -80,7 +80,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     try {
-      final response = await http.get(url);
+      final response = await http.get(url + '/products.json');
       final extracted = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       extracted.forEach((productId, productData) {
@@ -109,10 +109,16 @@ class Products with ChangeNotifier {
     this.notifyListeners();
   }
 
-  void updateProduct(String id, Product existingProduct) {
+  Future<void> updateProduct(String id, Product existingProduct) async {
     final productIndex =
         this._items.indexWhere((p) => p.id == existingProduct.id);
     if (productIndex >= 0) {
+      await http.patch(url + '/products/$id.json', body: json.encode({
+        'title': existingProduct.title,
+        'description': existingProduct.description,
+        'imageUrl': existingProduct.imageUrl,
+        'price': existingProduct.price,
+      }));
       this._items[productIndex] = existingProduct;
     } else {
       print('...');
