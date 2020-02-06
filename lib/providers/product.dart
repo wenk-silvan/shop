@@ -27,7 +27,7 @@ class Product with ChangeNotifier {
     this.notifyListeners();
   }
 
-  void toggleFavorite() async {
+  Future<void> toggleFavorite() async {
     final oldStatus = isFavorite;
     this.isFavorite = !this.isFavorite;
     this.notifyListeners();

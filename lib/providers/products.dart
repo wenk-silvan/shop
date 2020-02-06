@@ -85,6 +85,7 @@ class Products with ChangeNotifier {
       final response = await http.get(url + '/products.json');
       final extracted = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
+      if (extracted == null) return;
       extracted.forEach((productId, productData) {
         loadedProducts.add(Product(
           id: productId,
@@ -95,7 +96,6 @@ class Products with ChangeNotifier {
           isFavorite: productData["isFavorite"],
         ));
       });
-      print("fetchProducts");
       this._items = loadedProducts;
       this.notifyListeners();
     } catch (error) {
