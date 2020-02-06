@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'product.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/providers/product.dart';
@@ -71,8 +72,7 @@ class Products with ChangeNotifier {
       );
       this._items.add(newProduct);
       this.notifyListeners();
-    }
-    catch(error) {
+    } catch (error) {
       print(error);
       throw error;
     }
@@ -81,9 +81,22 @@ class Products with ChangeNotifier {
   Future<void> fetchProducts() async {
     try {
       final response = await http.get(url);
-      print(json.decode(response.body));
+      final extracted = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
+      extracted.forEach((productId, productData) {
+        loadedProducts.add(Product(
+          id: productId,
+          price: productData["price"],
+          description: productData["description"],
+          imageUrl: productData["imageUrl"],
+          title: productData["title"],
+          isFavorite: productData["isFavorite"],
+        ));
+      });
+      this._items = loadedProducts;
+      this.notifyListeners();
     } catch (error) {
-      throw(error);
+      throw (error);
     }
   }
 
