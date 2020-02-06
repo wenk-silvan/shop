@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter_complete_guide/models/http_exception.dart';
+
 import 'product.dart';
 
 import 'package:flutter/material.dart';
@@ -104,24 +106,32 @@ class Products with ChangeNotifier {
     return this._items.firstWhere((p) => p.id == id);
   }
 
-  void removeProduct(String id) {
-    this._items.removeWhere((i) => i.id == id);
+  void removeProduct(String id) async {
+    final existingProductIndex = this._items.indexWhere((i) => i.id == id);
+    var existingProduct = this._items[existingProductIndex];
+    this._items.removeAt(existingProductIndex);
     this.notifyListeners();
+    final response = await http.delete(url + '/products/$id.json');
+    if (response.statusCode >= 400) {
+      this._items.insert(existingProductIndex, existingProduct);
+      this.notifyListeners();
+      throw HttpException('Could not delete product.');
+    }
+    existingProduct = null;
   }
 
   Future<void> updateProduct(String id, Product existingProduct) async {
     final productIndex =
         this._items.indexWhere((p) => p.id == existingProduct.id);
     if (productIndex >= 0) {
-      await http.patch(url + '/products/$id.json', body: json.encode({
-        'title': existingProduct.title,
-        'description': existingProduct.description,
-        'imageUrl': existingProduct.imageUrl,
-        'price': existingProduct.price,
-      }));
+      await http.patch(url + '/products/$id.json',
+          body: json.encode({
+            'title': existingProduct.title,
+            'description': existingProduct.description,
+            'imageUrl': existingProduct.imageUrl,
+            'price': existingProduct.price,
+          }));
       this._items[productIndex] = existingProduct;
-    } else {
-      print('...');
     }
   }
 }
