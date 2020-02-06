@@ -39,6 +39,16 @@ class UserProductItem extends StatelessWidget {
                 try {
                   await Provider.of<Products>(context, listen: false)
                       .removeProduct(this.product.id);
+                  scaffold.showSnackBar(
+                    SnackBar(
+                      content: Text('Removed item.'),
+                      duration: Duration(seconds: 2),
+                      action: SnackBarAction(
+                        label: 'UNDO',
+                        onPressed: () => this.addProduct(this.product),
+                      ),
+                    ),
+                  );
                 } catch (error) {
                   scaffold.showSnackBar(
                     SnackBar(
@@ -46,16 +56,6 @@ class UserProductItem extends StatelessWidget {
                     ),
                   );
                 }
-                /*scaffold.showSnackBar(
-                  SnackBar(
-                    content: Text('Removed item.'),
-                    duration: Duration(seconds: 2),
-                    action: SnackBarAction(
-                      label: 'UNDO',
-                      onPressed: () => this.addProduct(this.product),
-                    ),
-                  ),
-                );*/
               },
               color: Theme.of(context).errorColor,
             ),
