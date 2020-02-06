@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
+  static const url = 'https://tutorial-shop-a3ad2.firebaseio.com';
+
   final String id;
   final String title;
   final String description;
@@ -17,8 +22,25 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavorite() {
+  void _setFavoriteValue(bool newValue) {
+    this.isFavorite = newValue;
+    this.notifyListeners();
+  }
+
+  void toggleFavorite() async {
+    final oldStatus = isFavorite;
     this.isFavorite = !this.isFavorite;
     this.notifyListeners();
+    try {
+      final response = await http.patch(url + '/products/$id.json',
+          body: json.encode({
+            'isFavorite': this.isFavorite,
+          }));
+      if (response.statusCode >= 400) {
+        this._setFavoriteValue(oldStatus);
+      }
+    } catch (error) {
+      this._setFavoriteValue(oldStatus);
+    }
   }
 }

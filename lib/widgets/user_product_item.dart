@@ -52,7 +52,7 @@ class UserProductItem extends StatelessWidget {
                 } catch (error) {
                   scaffold.showSnackBar(
                     SnackBar(
-                      content: Text('Failed to remove item.'),
+                      content: Text('Failed to remove item.', textAlign: TextAlign.center,),
                     ),
                   );
                 }

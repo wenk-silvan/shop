@@ -32,7 +32,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   @override
   void didChangeDependencies() {
     if (this._isInit) {
-      this._isInit = false;
       setState(() {
         this._isLoading = true;
       });
@@ -42,6 +41,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         });
       });
     }
+    this._isInit = false;
     super.didChangeDependencies();
   }
 

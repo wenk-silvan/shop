@@ -95,6 +95,7 @@ class Products with ChangeNotifier {
           isFavorite: productData["isFavorite"],
         ));
       });
+      print("fetchProducts");
       this._items = loadedProducts;
       this.notifyListeners();
     } catch (error) {
