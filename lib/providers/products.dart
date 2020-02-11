@@ -13,9 +13,10 @@ class Products with ChangeNotifier {
 
   List<Product> _items = [];
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items) {
-   this.authString = '?auth=$authToken';
+  Products(this.authToken, this.userId, this._items) {
+    this.authString = '?auth=$authToken';
   }
 
   List<Product> get items {
@@ -34,7 +35,6 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavorite': product.isFavorite,
           }));
 
       final newProduct = Product(
@@ -59,6 +59,11 @@ class Products with ChangeNotifier {
       final extracted = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       if (extracted == null) return;
+
+      final favoriteResponse =
+          await http.get(url + '/userFavorites/$userId.json$authString');
+      final favoriteData = json.decode(favoriteResponse.body);
+
       extracted.forEach((productId, productData) {
         loadedProducts.add(Product(
           id: productId,
@@ -66,7 +71,8 @@ class Products with ChangeNotifier {
           description: productData["description"],
           imageUrl: productData["imageUrl"],
           title: productData["title"],
-          isFavorite: productData["isFavorite"],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[productId] ?? false,
         ));
       });
       this._items = loadedProducts;
