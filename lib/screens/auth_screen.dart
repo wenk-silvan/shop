@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/auth.dart';
+import 'package:provider/provider.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -43,7 +45,8 @@ class AuthScreen extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
                       transform: Matrix4.rotationZ(-8 * pi / 180)
-                        ..translate(-10.0), //Return previous statement / method
+                        ..translate(-10.0),
+                      //Return previous statement / method
                       // ..translate(-10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -100,7 +103,7 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
-  void _submit() {
+  void _submit() async {
     if (!_formKey.currentState.validate()) {
       // Invalid!
       return;
@@ -112,7 +115,10 @@ class _AuthCardState extends State<AuthCard> {
     if (_authMode == AuthMode.Login) {
       // Log user in
     } else {
-      // Sign user up
+      await Provider.of<Auth>(context, listen: false).signup(
+        _authData['email'],
+        _authData['password'],
+      );
     }
     setState(() {
       _isLoading = false;
