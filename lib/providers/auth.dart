@@ -64,4 +64,11 @@ class Auth with ChangeNotifier {
   Future<void> signup(String email, String password) async {
     return this._authenticate(email, password, 'signUp');
   }
+
+  void logout() {
+    this._userId = null;
+    this._token = null;
+    this._expiryDate = null;
+    this.notifyListeners();
+  }
 }
