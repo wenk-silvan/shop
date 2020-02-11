@@ -35,6 +35,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
+            'creatorId': userId,
           }));
 
       final newProduct = Product(
@@ -53,9 +54,10 @@ class Products with ChangeNotifier {
     }
   }
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchProducts([bool filterByUser = false]) async {
+    var filterString = filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+    final response = await http.get(url + '/products.json$authString$filterString');
     try {
-      final response = await http.get(url + '/products.json$authString');
       final extracted = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
       if (extracted == null) return;
